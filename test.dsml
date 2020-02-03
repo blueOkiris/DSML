@@ -1,0 +1,27 @@
+<module name="test" inputs="a,b" outputs="c">
+    <wire name="c">
+        <!-- c = (a & b) | b -->
+        <and a="a" b="b"></and>
+        <or a="c" b="b"></or>
+    </wire>
+</module>
+
+<simulation name="sim1">
+    <device name="test_mod1" module="test" initialize="a=gnd,b=gnd"></device>
+
+    <!-- @ 3ms b = 1 (out of order for testing simulation contstruction -->
+    <assign time="3ms" device="test_mod1" id="b"> vcc </assign>
+
+    <!-- a = 0, b = 0 -->
+    <assign time="0ms" device="test_mod1" id="a"> gnd </assign>
+    <assign time="0ms" device="test_mod1" id="b"> gnd </assign>
+
+    <!-- b = 1 -->
+    <assign time="1ms" device="test_mod1" id="b"> vcc </assign>
+
+    <!-- a = 1, b = 0 -->
+    <assign time="2ms" device="test_mod1" id="a"> vcc </assign>
+    <assign time="2ms" device="test_mod1" id="b"> gnd </assign>
+
+    <output device="test_mod1" id="c"></output>
+</simulation>

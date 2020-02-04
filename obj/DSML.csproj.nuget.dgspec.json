@@ -35,6 +35,16 @@
       },
       "frameworks": {
         "netcoreapp3.1": {
+          "dependencies": {
+            "GtkSharp": {
+              "target": "Package",
+              "version": "[3.22.25.56, )"
+            },
+            "ScottPlot": {
+              "target": "Package",
+              "version": "[4.0.16, )"
+            }
+          },
           "imports": [
             "net461",
             "net462",

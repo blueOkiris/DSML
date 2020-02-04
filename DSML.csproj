@@ -5,4 +5,9 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
   </PropertyGroup>
 
+  <ItemGroup>
+    <PackageReference Include="GtkSharp" Version="3.22.25.56" />
+    <PackageReference Include="ScottPlot" Version="4.0.16" />
+  </ItemGroup>
+
 </Project>

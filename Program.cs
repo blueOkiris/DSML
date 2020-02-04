@@ -1,6 +1,8 @@
 ﻿using System;
 using System.IO;
 using System.Text;
+using System.Collections.Generic;
+using ScottPlot;
 
 namespace DSML
 {
@@ -53,6 +55,19 @@ namespace DSML
 
                         foreach(string simulation in system.Simulations.Keys)
                             system.Simulations[simulation].Simulate();
+                        break;
+                    }
+                    
+                    case "plot": {
+                        DigitalSystem system = GetSystem(args[1]);
+                        if(system == null)
+                            return;
+
+                        foreach(string simulation in system.Simulations.Keys) {
+                            List<PlotData> data = system.Simulations[simulation].CreatePlot();
+                            PlotWindow.ShowPlot(args[1], data.ToArray());
+                        }
+
                         break;
                     }
 

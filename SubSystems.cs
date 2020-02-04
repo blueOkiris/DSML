@@ -8,7 +8,7 @@ using System.Linq;
 
 namespace DSML {
     struct Clock {
-        public double Frequency, StartTime;
+        public double Frequency, StartTime, Period;
         public string DeviceName;
         public string InputId;
         public bool InitialValue;
@@ -19,6 +19,8 @@ namespace DSML {
             DeviceName = deviceName;
             InputId = inputId;
             InitialValue = initialValue;
+
+            Period = 1 / Frequency;
         }
 
         public Assignment[] ToAssignments(double maxTime) {
@@ -30,7 +32,7 @@ namespace DSML {
                 assignments.Add(new Assignment(i, DeviceName, InputId, currentValue));
 
                 currentValue = !currentValue;
-                i += 1/(Frequency);
+                i += Period;
             }
 
             return assignments.ToArray();
@@ -170,6 +172,82 @@ namespace DSML {
                 
                 Console.WriteLine();
             }
+        }
+
+        public List<PlotData> CreatePlot() {
+            // Basically Simulate, but store data in "plot datas" instead of stuff
+            Dictionary<string, List<double>> plotValues = new Dictionary<string, List<double>>();
+            Dictionary<string, List<double>> plotTimes = new Dictionary<string, List<double>>();
+
+            Assignments.Sort();
+
+            Dictionary<double, List<Assignment>> timedAssignments = new Dictionary<double, List<Assignment>>();
+            for(int i = 0; i < Assignments.Count; i++) {
+                if(!timedAssignments.ContainsKey(Assignments[i].Time)) {
+                    timedAssignments.Add(Assignments[i].Time, new List<Assignment>());
+                    timedAssignments[Assignments[i].Time].Add(Assignments[i]);
+                } else
+                    timedAssignments[Assignments[i].Time].Add(Assignments[i]);
+            }
+
+            foreach(double t in timedAssignments.Keys) {
+                for(int j = 0; j < timedAssignments[t].Count; j++) {
+                    Devices[(timedAssignments[t])[j].DeviceName].BaseModuleCopy.Inputs[(timedAssignments[t])[j].InputId] = (timedAssignments[t])[j].Value;
+                    Devices[(timedAssignments[t])[j].DeviceName].BaseModuleCopy.Update();
+                }
+
+                foreach(string output in Outputs.Keys) {
+                    if(Devices[Outputs[output].DeviceName].BaseModuleCopy.Outputs.ContainsKey(Outputs[output].InputId)) {
+                        /*Console.WriteLine(
+                            "At t = " + t + " seconds, "
+                        + output + " = " + Devices[Outputs[output].DeviceName].BaseModuleCopy.Outputs[Outputs[output].InputId]);*/
+                        if(!plotTimes.ContainsKey(output)) {
+                            plotTimes.Add(output, new List<double>());
+                            plotValues.Add(output, new List<double>());
+
+                            plotTimes[output].Add(0);
+                            plotValues[output].Add(0);
+                        } else {
+                            plotTimes[output].Add(t);
+                            plotValues[output].Add(plotValues[output][plotValues[output].Count - 1]);
+                        }
+
+                        plotTimes[output].Add(t);
+                        plotValues[output].Add(
+                            Devices[Outputs[output].DeviceName].BaseModuleCopy.Outputs[Outputs[output].InputId] ? 5 : 0
+                        );
+                    } else if(Devices[Outputs[output].DeviceName].BaseModuleCopy.Inputs.ContainsKey(Outputs[output].InputId)) {
+                        /*Console.WriteLine(
+                            "At t = " + t + " seconds, "
+                        + output + " = " + Devices[Outputs[output].DeviceName].BaseModuleCopy.Inputs[Outputs[output].InputId]);*/
+                        if(!plotTimes.ContainsKey(output)) {
+                            plotTimes.Add(output, new List<double>());
+                            plotValues.Add(output, new List<double>());
+
+                            plotTimes[output].Add(0);
+                            plotValues[output].Add(0);
+                        } else {
+                            plotTimes[output].Add(t);
+                            plotValues[output].Add(plotValues[output][plotValues[output].Count - 1]);
+                        }
+
+                        plotTimes[output].Add(t);
+                        plotValues[output].Add(
+                            Devices[Outputs[output].DeviceName].BaseModuleCopy.Inputs[Outputs[output].InputId] ? 5 : 0
+                        );
+                    } else
+                        throw new Exception("Output " + Outputs[output].InputId + " does not exist");
+                }
+                
+                Console.WriteLine();
+            }
+
+            List<PlotData> data = new List<PlotData>();
+
+            foreach(string name in plotTimes.Keys)
+                data.Add(new PlotData(name, plotTimes[name], plotValues[name]));
+
+            return data;
         }
     }
 

@@ -57,7 +57,7 @@ namespace DSML {
         private static Token ParseIdentifier(string input, ref int index) {
             StringBuilder identStr = new StringBuilder();
 
-            while(char.IsLetterOrDigit(input[index]) || input[index] == '_') {
+            while(char.IsLetterOrDigit(input[index]) || input[index] == '_' || input[index] == '-') {
                 identStr.Append(input[index]);
 
                 index++;

@@ -156,10 +156,19 @@ namespace DSML {
                 }
 
                 foreach(string output in Outputs.Keys) {
-                    Console.WriteLine(
-                        "At t = " + t + " seconds, "
-                      + output + " = " + Devices[Outputs[output].DeviceName].BaseModuleCopy.Outputs[Outputs[output].InputId]);
+                    if(Devices[Outputs[output].DeviceName].BaseModuleCopy.Outputs.ContainsKey(Outputs[output].InputId))
+                        Console.WriteLine(
+                            "At t = " + t + " seconds, "
+                        + output + " = " + Devices[Outputs[output].DeviceName].BaseModuleCopy.Outputs[Outputs[output].InputId]);
+                    else if(Devices[Outputs[output].DeviceName].BaseModuleCopy.Inputs.ContainsKey(Outputs[output].InputId))
+                        Console.WriteLine(
+                            "At t = " + t + " seconds, "
+                        + output + " = " + Devices[Outputs[output].DeviceName].BaseModuleCopy.Inputs[Outputs[output].InputId]);
+                    else
+                        throw new Exception("Output " + Outputs[output].InputId + " does not exist");
                 }
+                
+                Console.WriteLine();
             }
         }
     }
@@ -181,10 +190,61 @@ namespace DSML {
         }
 
         public void Update() {
+            // Registers
+            for(int i = 0; i < Registers.Length; i++) {
+                foreach(Wire wire in Wires) {
+                    if(!Registers[i].Drivers.ContainsKey(wire.Name))
+                        Registers[i].Drivers.Add(wire.Name, false);
+                }
+
+                foreach(Reg reg in Registers) {
+                    if(!Registers[i].Drivers.ContainsKey(reg.Name))
+                        Registers[i].Drivers.Add(reg.Name, false);
+                }
+
+                foreach(string input in Inputs.Keys) {
+                    if(!Registers[i].Drivers.ContainsKey(input))
+                        Registers[i].Drivers.Add(input, false);
+                }
+
+                foreach(string output in Outputs.Keys) {
+                    if(!Registers[i].Drivers.ContainsKey(output))
+                        Registers[i].Drivers.Add(output, false);
+                }
+            }
+
+            for(int i = 0; i < Registers.Length; i++) {
+                foreach(string input in Inputs.Keys) {
+                    if(input == Registers[i].Name)
+                        throw new Exception("Cannot assign to input '" + input + "'");
+                    
+                    if(Registers[i].Drivers.ContainsKey(input))
+                        Registers[i].Drivers[input] = Inputs[input];
+                }
+
+                foreach(string output in Outputs.Keys) {
+                    if(Registers[i].Drivers.ContainsKey(output))
+                        Registers[i].Drivers[output] = Outputs[output];
+                }
+
+                Registers[i].Update();
+
+                foreach(string output in Outputs.Keys.ToList()) {
+                    if(Registers[i].Name == output)
+                        Outputs[output] = Registers[i].Output();
+                }
+            }
+
+            // Wires
             for(int i = 0; i < Wires.Length; i++) {
                 foreach(Wire wire in Wires) {
                     if(!Wires[i].Drivers.ContainsKey(wire.Name))
                         Wires[i].Drivers.Add(wire.Name, false);
+                }
+
+                foreach(Reg reg in Registers) {
+                    if(!Wires[i].Drivers.ContainsKey(reg.Name))
+                        Wires[i].Drivers.Add(reg.Name, false);
                 }
 
                 foreach(string input in Inputs.Keys) {
@@ -207,6 +267,11 @@ namespace DSML {
                         Wires[i].Drivers[input] = Inputs[input];
                 }
 
+                foreach(string output in Outputs.Keys) {
+                    if(Wires[i].Drivers.ContainsKey(output))
+                        Wires[i].Drivers[output] = Outputs[output];
+                }
+
                 foreach(string output in Outputs.Keys.ToList()) {
                     if(Wires[i].Name == output)
                         Outputs[output] = Wires[i].Output();
@@ -215,12 +280,15 @@ namespace DSML {
         }
     }
 
-    abstract class IO { public string Name; public abstract bool Output(); }
+    abstract class IO {
+        public Func<Dictionary<string, bool>, bool>[] Driven;
+        public string Name;
+        public Dictionary<string, bool> Drivers;
+        
+        public abstract bool Output();
+    }
 
     class Wire : IO {
-        public Func<Dictionary<string, bool>, bool>[] Driven;
-        public Dictionary<string, bool> Drivers;
-
         public Wire(string name, Func<Dictionary<string, bool>, bool>[] driven, Dictionary<string, bool> drivers) {
             Name = name;
             Driven = driven;
@@ -238,8 +306,6 @@ namespace DSML {
     }
 
     class Reg : IO {
-        public Func<Dictionary<string, bool>, bool>[] Driven;
-        public Dictionary<string, bool> Drivers;
         public bool RisingEdge, ActiveLow;
         public bool Default;
         public string ResetName, ClockName;

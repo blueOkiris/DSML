@@ -12,7 +12,7 @@
 
 <simulation name="sim1">
     <device name="test_mod1" module="test" initialize="a=gnd,b=gnd"></device>
-    <clock start="0ms" initialize="vcc" frequency="2000" device="test_mod1" id="clk"></clock>
+    <clock start="0.1ms" frequency="500Hz" device="test_mod1" id="clk"> vcc </clock>
 
     <!-- @ 3ms b = 1 (out of order for testing simulation contstruction -->
     <assign time="3ms" device="test_mod1" id="b"> vcc </assign>
@@ -28,6 +28,11 @@
     <assign time="2ms" device="test_mod1" id="a"> vcc </assign>
     <assign time="2ms" device="test_mod1" id="b"> gnd </assign>
 
+    <assign time="4ms" device="test_mod1" id="a"> gnd </assign>
+    <assign time="4ms" device="test_mod1" id="b"> gnd </assign>
+    <assign time="6ms" device="test_mod1" id="b"> gnd </assign>
+
     <output device="test_mod1" id="c"></output>
     <output device="test_mod1" id="d"></output>
+    <output device="test_mod1" id="clk"></output>
 </simulation>

@@ -10,4 +10,6 @@ An XML-like alternative to Verilog, well kind of. Not NEARLY as feature-filled.
 
 dotnet run \<simulation | diagram\> \<filename\>
 
+Example: dotnet run simulation test.dsml
+
 Currently only simulation does anything

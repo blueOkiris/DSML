@@ -40,7 +40,8 @@ namespace DSML {
                     datum.Values.ToArray(),
                     lineWidth: 3,
                     label: datum.Name,
-                    lineStyle: shapes[iconIndex++]);
+                    lineStyle: shapes[iconIndex++],
+                    markerSize: 10);
                 plot.XLabel("Time");
                 plot.YLabel("Data");
 

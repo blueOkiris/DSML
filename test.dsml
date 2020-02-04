@@ -1,4 +1,4 @@
-<module name="test" inputs="a,b,clk,rst" outputs="c,d">
+<module name="test" inputs="a,b,clk,rst" outputs="c,d,e">
     <wire name="c">
         <!-- c = (a & b) | b -->
         <and a="a" b="b"></and>

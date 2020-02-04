@@ -35,7 +35,12 @@ namespace DSML {
             int iconIndex = 0;
 
             foreach(PlotData datum in data) {
-                plot.PlotScatter(datum.Times.ToArray(), datum.Values.ToArray(), label: datum.Name, lineStyle: shapes[iconIndex++]);
+                plot.PlotScatter(
+                    datum.Times.ToArray(),
+                    datum.Values.ToArray(),
+                    lineWidth: 3,
+                    label: datum.Name,
+                    lineStyle: shapes[iconIndex++]);
                 plot.XLabel("Time");
                 plot.YLabel("Data");
 

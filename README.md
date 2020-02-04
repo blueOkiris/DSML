@@ -18,5 +18,4 @@ An XML-like alternative to Verilog, well kind of. Not NEARLY as feature-filled.
 
 Example: `dotnet run plot test.dsml` results in:
 
-![Image of example plot]
-(https://github.com/blueOkiris/DSML/blob/master/example-plot.png)
+<img src="example-plot.png" width="640" title="Example Plot">

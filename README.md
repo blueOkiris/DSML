@@ -30,10 +30,11 @@ Example module:
     </reg>
 </module>
 ```
+
 'and_func.mls'
 ```
 Inputs["a"] && Inputs["b"]
-
+```
 
 ## Running
 

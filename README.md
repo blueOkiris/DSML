@@ -14,10 +14,15 @@ Example module:
 <module name="test" inputs="a,b,clk,rst" outputs="c,d,e">
     <wire name="c">
         <!-- c = (a & b) | b -->
-        <and a="a" b="b"></and>
+        <!-- Loaded from file now <and a="a" b="b"></and> -->
+        <file src="and_func.mls"></file>
+
+        <!-- Next is a test and shouldn't do anything actually -->
+        <code> "Inputs[\"c\"]" </code>
+
         <or a="c" b="b"></or>
     </wire>
-    <reg name="d" clock="clk" reset="rst" rising="true" active-low="false" default="gnd">
+    <reg name="d" clock="clk" reset="rst" positive-level="true" active-low="false" default="gnd">
         <!-- d = c (will only activate on clock pulse) -->
         c
     </reg>

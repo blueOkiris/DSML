@@ -384,16 +384,16 @@ namespace DSML {
     }
 
     class Reg : IO {
-        public bool RisingEdge, ActiveLow;
+        public bool PositiveLevel, ActiveLow;
         public bool Default;
         public string ResetName, ClockName;
 
-        public Reg(string name, string clockName, string resetName, bool risingEdge, bool activeLow, bool def, Func<Dictionary<string, bool>, bool>[] driven, Dictionary<string, bool> drivers) {
+        public Reg(string name, string clockName, string resetName, bool positiveLevel, bool activeLow, bool def, Func<Dictionary<string, bool>, bool>[] driven, Dictionary<string, bool> drivers) {
             Name = name;
             ClockName = clockName;
             ResetName = resetName;
             Driven = driven;
-            RisingEdge = risingEdge;
+            PositiveLevel = positiveLevel;
             ActiveLow = activeLow;
             
             Drivers = drivers;
@@ -409,7 +409,7 @@ namespace DSML {
         public void Update() {
             if((ActiveLow && !Drivers[ResetName]) || (!ActiveLow && Drivers[ResetName]))
                 Drivers[Name] = default;
-            else if((RisingEdge && Drivers[ClockName]) || (!RisingEdge && Drivers[ClockName])) {
+            else if((PositiveLevel && Drivers[ClockName]) || (!PositiveLevel && Drivers[ClockName])) {
                 for(int i = 0; i < Driven.Length; i++)
                     Drivers[Name] = Driven[i](Drivers);
             }

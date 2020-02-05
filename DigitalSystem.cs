@@ -63,7 +63,7 @@ namespace DSML {
 
         private Reg BuildRegister(Token token) {
             string name = "", clockName = "", resetName = "";
-            bool risingEdge = false, activeLow = false, def = false;
+            bool positiveLevel = false, activeLow = false, def = false;
             List<Func<Dictionary<string, bool>, bool>> driven = new List<Func<Dictionary<string, bool>, bool>>();
             Dictionary<string, bool> drivers = new Dictionary<string, bool>();
 
@@ -77,10 +77,10 @@ namespace DSML {
                         clockName = subToken.SubTokens[1].Value;
                     else if(subToken.SubTokens[0].Value == "reset")
                         resetName = subToken.SubTokens[1].Value;
-                    else if(subToken.SubTokens[0].Value == "rising") {
+                    else if(subToken.SubTokens[0].Value == "positive-level") {
                         if(subToken.SubTokens[1].Value != "true" && subToken.SubTokens[1].Value != "false")
                             throw new Exception("Expected true or false for rising");
-                        risingEdge = subToken.SubTokens[1].Value == "true";
+                        positiveLevel = subToken.SubTokens[1].Value == "true";
                     } else if(subToken.SubTokens[0].Value == "active-low") {
                         if(subToken.SubTokens[1].Value != "true" && subToken.SubTokens[1].Value != "false")
                             throw new Exception("Expected true or false for activeLow");
@@ -110,7 +110,7 @@ namespace DSML {
                     throw new Exception("Unknown token in reg!");
             }
 
-            return new Reg(name, clockName, resetName, risingEdge, activeLow, def, driven.ToArray(), drivers);
+            return new Reg(name, clockName, resetName, positiveLevel, activeLow, def, driven.ToArray(), drivers);
         }
 
         private Wire BuildWire(Token token) {

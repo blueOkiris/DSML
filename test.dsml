@@ -4,14 +4,14 @@
         <and a="a" b="b"></and>
         <or a="c" b="b"></or>
     </wire>
-    <reg name="d" clock="clk" reset="rst" rising="true" active-low="false" default="gnd">
+    <reg name="d" clock="clk" reset="rst" positive-level="true" active-low="false" default="gnd">
         <!-- d = c (will only activate on clock pulse) -->
         c
     </reg>
 </module>
 
 <simulation name="sim1">
-    <device name="test_mod1" module="test" initialize="a=gnd,b=gnd"></device>
+    <device name="test_mod1" module="test" initialize="a=gnd,b=gnd,clk=gnd,reset=gnd"></device>
     <clock start="1.1ms" frequency="3000Hz" device="test_mod1" id="clk"> vcc </clock>
 
     <!-- @ 3ms b = 1 (out of order for testing simulation contstruction -->

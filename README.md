@@ -19,6 +19,8 @@ Example module:
 
         <!-- Next is a test and shouldn't do anything actually -->
         <code> "Inputs[\"c\"]" </code>
+        <not a="c"></not>
+        <not a="c"></not>
 
         <or a="c" b="b"></or>
     </wire>

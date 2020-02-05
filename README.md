@@ -104,4 +104,8 @@ These are the planned next steps to add to the language add another input to you
 
     - Will be called for simulations like `module.input_bus[index]` just as one familiar with programming would expect
 
+3) Diagram
+
+    - Generates a schematic for each module
+
 If you have any suggestions, feel free to email me at dylantdmt@gmail.com!

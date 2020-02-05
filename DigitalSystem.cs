@@ -25,6 +25,104 @@ namespace DSML {
             Simulations = new Dictionary<string, Simulation>();
         }
 
+        private Func<Dictionary<string, bool>, bool> BuildXor(Token token) {
+            string a = "", b = "";
+
+            foreach(Token subToken in token.SubTokens) {
+                if(subToken.Type == TokenType.ATTR) {
+                    if(subToken.SubTokens[0].Type != TokenType.IDENT || subToken.SubTokens[1].Type != TokenType.STR)
+                        throw new Exception("Malformed attribute. System error. Sorry :(");
+                    else if(subToken.SubTokens[0].Value == "a")
+                        a = subToken.SubTokens[1].Value;
+                    else if(subToken.SubTokens[0].Value == "b")
+                        b = subToken.SubTokens[1].Value;
+                    else
+                        throw new Exception("Unknown xor attribute: " + subToken.SubTokens[0].Value);
+                } else if(subToken.Type == TokenType.COMMENT)
+                    continue;
+                else
+                    throw new Exception("Unknown token in xor!");
+            }
+
+            return
+                delegate (Dictionary<string, bool> inputs) {
+                    return inputs[a] ^ inputs[b];
+                };
+        }
+
+        private Func<Dictionary<string, bool>, bool> BuildNot(Token token) {
+            string a = "";
+
+            foreach(Token subToken in token.SubTokens) {
+                if(subToken.Type == TokenType.ATTR) {
+                    if(subToken.SubTokens[0].Type != TokenType.IDENT || subToken.SubTokens[1].Type != TokenType.STR)
+                        throw new Exception("Malformed attribute. System error. Sorry :(");
+                    else if(subToken.SubTokens[0].Value == "a")
+                        a = subToken.SubTokens[1].Value;
+                    else
+                        throw new Exception("Unknown not attribute: " + subToken.SubTokens[0].Value);
+                } else if(subToken.Type == TokenType.COMMENT)
+                    continue;
+                else
+                    throw new Exception("Unknown token in not!");
+            }
+
+            return
+                delegate (Dictionary<string, bool> inputs) {
+                    return !inputs[a];
+                };
+        }
+
+        private Func<Dictionary<string, bool>, bool> BuildNand(Token token) {
+            string a = "", b = "";
+
+            foreach(Token subToken in token.SubTokens) {
+                if(subToken.Type == TokenType.ATTR) {
+                    if(subToken.SubTokens[0].Type != TokenType.IDENT || subToken.SubTokens[1].Type != TokenType.STR)
+                        throw new Exception("Malformed attribute. System error. Sorry :(");
+                    else if(subToken.SubTokens[0].Value == "a")
+                        a = subToken.SubTokens[1].Value;
+                    else if(subToken.SubTokens[0].Value == "b")
+                        b = subToken.SubTokens[1].Value;
+                    else
+                        throw new Exception("Unknown nand attribute: " + subToken.SubTokens[0].Value);
+                } else if(subToken.Type == TokenType.COMMENT)
+                    continue;
+                else
+                    throw new Exception("Unknown token in nand!");
+            }
+
+            return
+                delegate (Dictionary<string, bool> inputs) {
+                    return !(inputs[a] && inputs[b]);
+                };
+        }
+
+        private Func<Dictionary<string, bool>, bool> BuildNor(Token token) {
+            string a = "", b = "";
+
+            foreach(Token subToken in token.SubTokens) {
+                if(subToken.Type == TokenType.ATTR) {
+                    if(subToken.SubTokens[0].Type != TokenType.IDENT || subToken.SubTokens[1].Type != TokenType.STR)
+                        throw new Exception("Malformed attribute. System error. Sorry :(");
+                    else if(subToken.SubTokens[0].Value == "a")
+                        a = subToken.SubTokens[1].Value;
+                    else if(subToken.SubTokens[0].Value == "b")
+                        b = subToken.SubTokens[1].Value;
+                    else
+                        throw new Exception("Unknown nor attribute: " + subToken.SubTokens[0].Value);
+                } else if(subToken.Type == TokenType.COMMENT)
+                    continue;
+                else
+                    throw new Exception("Unknown token in nor!");
+            }
+
+            return
+                delegate (Dictionary<string, bool> inputs) {
+                    return !(inputs[a] || inputs[b]);
+                };
+        }
+
         private Func<Dictionary<string, bool>, bool> BuildOr(Token token) {
             string a = "", b = "";
 
@@ -37,11 +135,11 @@ namespace DSML {
                     else if(subToken.SubTokens[0].Value == "b")
                         b = subToken.SubTokens[1].Value;
                     else
-                        throw new Exception("Unknown and attribute: " + subToken.SubTokens[0].Value);
+                        throw new Exception("Unknown or attribute: " + subToken.SubTokens[0].Value);
                 } else if(subToken.Type == TokenType.COMMENT)
                     continue;
                 else
-                    throw new Exception("Unknown token in and!");
+                    throw new Exception("Unknown token in or!");
             }
 
             return
@@ -171,6 +269,14 @@ namespace DSML {
                         driven.Add(BuildAnd(subToken));
                     } else if(subToken.Value == "or") {
                         driven.Add(BuildOr(subToken));
+                    } else if(subToken.Value == "nand") {
+                        driven.Add(BuildNand(subToken));
+                    } else if(subToken.Value == "nor") {
+                        driven.Add(BuildNor(subToken));
+                    } else if(subToken.Value == "xor") {
+                        driven.Add(BuildXor(subToken));
+                    } else if(subToken.Value == "not") {
+                        driven.Add(BuildNot(subToken));
                     } else if(subToken.Value == "file") {
                         driven.Add(BuildFuncFromFile(subToken));
                     } else if(subToken.Value == "code") {
@@ -210,6 +316,14 @@ namespace DSML {
                         driven.Add(BuildAnd(subToken));
                     } else if(subToken.Value == "or") {
                         driven.Add(BuildOr(subToken));
+                    } else if(subToken.Value == "nand") {
+                        driven.Add(BuildNand(subToken));
+                    } else if(subToken.Value == "nor") {
+                        driven.Add(BuildNor(subToken));
+                    } else if(subToken.Value == "xor") {
+                        driven.Add(BuildXor(subToken));
+                    } else if(subToken.Value == "not") {
+                        driven.Add(BuildNot(subToken));
                     } else if(subToken.Value == "file") {
                         driven.Add(BuildFuncFromFile(subToken));
                     } else if(subToken.Value == "code") {

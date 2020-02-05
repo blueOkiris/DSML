@@ -63,6 +63,14 @@ These are just basic explanations. Look at test.dsml to see the application of t
 
  * `<or>` - Takes an a and a b wire input and outputs a || b. This is one of the sub-tags of wire.
 
+ * `<xor>` - Takes an a and a b wire input and outputs a ^ b. This is one of the sub-tags of wire.
+
+ * `<nor>` - Takes an a and a b wire input and outputs !(a || b). This is one of the sub-tags of wire.
+
+ * `<nand>` - Takes an a and a b wire input and outputs !(a && b). This is one of the sub-tags of wire.
+
+ * `<not>` - Takes an a and a b wire input and outputs !a. This is one of the sub-tags of wire.
+
  * `<file file-name="">` - Loads a custom C# function from a file called `WireFunction` taking a `Dictionary<string, bool>` and outputting a `bool` to represent a wire's value. This is a sub-tag of wire
 
  * `<code>` - Same as `<file>`, but instead of loading from a file, the code is loaded from a string inside the tag, i.e. `<code>` "blah blah blah" `</code>`
@@ -81,17 +89,13 @@ These are just basic explanations. Look at test.dsml to see the application of t
 
 These are the planned next steps to add to the language add another input to your module's list then set the inputs to the sub-device from the added one
 
-1) More logic gates (necessary!!!)
-
-    - Only have and and or, not even not. Will add more
-
-2) Allow modules to be used within another module (obviously just makes sense)
+1) Allow modules to be used within another module (obviously just makes sense)
 
     - Will use the `<device>` tag just like when using simulations.
 
     - Inputs to devices will be hidden. You'll need to
 
-3) Busses/"Arrays" (quality of life)
+2) Busses/"Arrays" (quality of life)
 
     - Technically not needed as you could add individual wires for everything, but still useful nonetheless
 

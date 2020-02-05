@@ -19,7 +19,7 @@
 
 <simulation name="sim1">
     <device name="test_mod1" module="test" initialize="a=gnd,b=gnd,clk=gnd,reset=gnd"></device>
-    <clock start="1.1ms" frequency="3000Hz" device="test_mod1" id="clk"> vcc </clock>
+    <clock start="0.9ms" frequency="3000Hz" device="test_mod1" id="clk"> vcc </clock>
 
     <!-- @ 3ms b = 1 (out of order for testing simulation contstruction -->
     <assign time="3ms" device="test_mod1" id="b"> vcc </assign>

@@ -4,7 +4,9 @@
 
 Digital System Markup Language
 
-An XML-like alternative to Verilog, well kind of. Not NEARLY as feature-filled.
+An XML-based hardware description language, well kind of.
+
+Not NEARLY as feature-filled as something like Verilog, just my attempt.
 
 Example module:
 

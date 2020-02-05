@@ -54,6 +54,10 @@ These are just basic explanations. Look at test.dsml to see the application of t
 
  * `<or>` - Takes an a and a b wire input and outputs a || b. This is one of the sub-tags of wire.
 
+ * `<file file-name="">` - Loads a custom C# function from a file called `WireFunction` taking a `Dictionary<string, bool>` and outputting a `bool` to represent a wire's value. This is a sub-tag of wire
+
+ * `<code>` - Same as `<file>`, but instead of loading from a file, the code is loaded from a string inside the tag, i.e. `<code>` "blah blah blah" `</code>`
+
  * `<simulation>` - This defines a simulation to be run. It's sub tags set up what will happen. It takes a name as an attribute
 
  * `<device>` - Defines a instance of a module that can be test for a simulation. You give it its own id as well as the base module, and you also give it intial values for its inputs along the lines of "input = vcc|gnd"

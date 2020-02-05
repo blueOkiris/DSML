@@ -1,7 +1,21 @@
 using System;
 using System.Collections.Generic;
+using System.IO;
+using Microsoft.CodeAnalysis.CSharp.Scripting;
+using Microsoft.CodeAnalysis.Scripting;
 
 namespace DSML {
+    public class ExternalFuncGlobal {
+        public Dictionary<string, bool> Inputs;
+
+        public ExternalFuncGlobal(Dictionary<string, bool> inputs) {
+            Inputs = new Dictionary<string, bool>();
+
+            foreach(string input in inputs.Keys)
+                Inputs.Add(input, inputs[input]);
+        }
+    }
+
     class DigitalSystem {
         public Dictionary<string, Module> Modules;
         public Dictionary<string, Simulation> Simulations;
@@ -61,6 +75,67 @@ namespace DSML {
                 };
         }
 
+        private Func<Dictionary<string, bool>, bool> BuildFuncFromFile(Token token) {
+            string fileName = "";
+            
+            foreach(Token subToken in token.SubTokens) {
+                if(subToken.Type == TokenType.ATTR) {
+                    if(subToken.SubTokens[0].Type != TokenType.IDENT || subToken.SubTokens[1].Type != TokenType.STR)
+                        throw new Exception("Malformed attribute. System error. Sorry :(");
+                    else if(subToken.SubTokens[0].Value == "src")
+                        fileName = subToken.SubTokens[1].Value;
+                    else
+                        throw new Exception("Unknown and attribute: " + subToken.SubTokens[0].Value);
+                } else if(subToken.Type == TokenType.COMMENT)
+                    continue;
+                else
+                    throw new Exception("Unknown token in file!");
+            }
+
+            return 
+                delegate (Dictionary<string, bool> inputs) {
+                    string funcStr = File.ReadAllText(fileName);
+
+                    Script<bool> script = CSharpScript.Create<bool>(
+                                                    funcStr, 
+                                                    ScriptOptions.Default.WithImports("System.Collections.Generic"), 
+                                                    typeof(ExternalFuncGlobal));
+                    script.Compile();
+
+                    ExternalFuncGlobal globals = new ExternalFuncGlobal(inputs);
+                    bool result = script.RunAsync(globals).Result.ReturnValue;
+
+                    return result;
+                };
+        }
+
+        private Func<Dictionary<string, bool>, bool> BuildFuncFromStr(Token token) {
+            string codeStr = "";
+
+            foreach(Token subToken in token.SubTokens) {
+                if(subToken.Type == TokenType.COMMENT)
+                    continue;
+                else if(subToken.Type == TokenType.STR) {
+                    codeStr = subToken.Value;
+                } else
+                    throw new Exception("Unknown token in file!");
+            }
+
+            return
+                delegate (Dictionary<string, bool> inputs) {
+                    Script<bool> script = CSharpScript.Create<bool>(
+                                                    codeStr,
+                                                    ScriptOptions.Default.WithImports("System.Collections.Generic"), 
+                                                    typeof(ExternalFuncGlobal));
+                    script.Compile();
+
+                    ExternalFuncGlobal globals = new ExternalFuncGlobal(inputs);
+                    bool result = script.RunAsync(globals).Result.ReturnValue;
+
+                    return result;
+                };
+        }
+
         private Reg BuildRegister(Token token) {
             string name = "", clockName = "", resetName = "";
             bool positiveLevel = false, activeLow = false, def = false;
@@ -96,6 +171,10 @@ namespace DSML {
                         driven.Add(BuildAnd(subToken));
                     } else if(subToken.Value == "or") {
                         driven.Add(BuildOr(subToken));
+                    } else if(subToken.Value == "file") {
+                        driven.Add(BuildFuncFromFile(subToken));
+                    } else if(subToken.Value == "code") {
+                        driven.Add(BuildFuncFromStr(subToken));
                     } else
                         throw new Exception("Unepected '" + subToken.Value + "' tag in wire");
                 } else if(subToken.Type == TokenType.IDENT) {
@@ -131,6 +210,10 @@ namespace DSML {
                         driven.Add(BuildAnd(subToken));
                     } else if(subToken.Value == "or") {
                         driven.Add(BuildOr(subToken));
+                    } else if(subToken.Value == "file") {
+                        driven.Add(BuildFuncFromFile(subToken));
+                    } else if(subToken.Value == "code") {
+                        driven.Add(BuildFuncFromStr(subToken));
                     } else
                         throw new Exception("Unepected '" + subToken.Value + "' tag in wire");
                 } else if(subToken.Type == TokenType.IDENT) {

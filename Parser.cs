@@ -77,7 +77,40 @@ namespace DSML {
                 throw new Exception("Unterminated string. Current str: ");
 
             while(input[index] != '"') {
-                str.Append(input[index]);
+                if(input[index] == '\\' && (index + 1 >= input.Length))
+                    throw new Exception("Unterminated string. Current str: " + str.ToString());
+                else if(input[index] == '\\') {
+                    switch(input[index + 1]) {
+                        case '"':
+                            index++;
+                            str.Append('\"');
+                            break;
+
+                        case '\\':
+                            index++;
+                            str.Append('\\');
+                            break;
+
+                        case 'r':
+                            index++;
+                            str.Append('\r');
+                            break;
+
+                        case 'n':
+                            index++;
+                            str.Append('\n');
+                            break;
+
+                        case 't':
+                            index++;
+                            str.Append('\t');
+                            break;
+
+                        default:
+                            throw new Exception("Unknown escape sequence: \\" + input[index + 1]);
+                    }
+                } else
+                    str.Append(input[index]);
 
                 index++;
                 if(index >= input.Length)

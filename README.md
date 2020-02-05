@@ -40,15 +40,19 @@ Example: `dotnet run plot test.dsml` results in:
 
 ## TODO
 
-These are the planned next steps to add to the language
+These are the planned next steps to add to the language add another input to your module's list then set the inputs to the sub-device from the added one
 
-1) Allow modules to be used within another module (obviously just makes sense)
+1) More logic gates (necessary!!!)
+
+    - Only have and and or, not even not. Will add more
+
+2) Allow modules to be used within another module (obviously just makes sense)
 
     - Will use the `<device>` tag just like when using simulations.
 
-    - Inputs to devices will be hidden. You'll need to add another input to your module's list then set the inputs to the sub-device from the added one
+    - Inputs to devices will be hidden. You'll need to
 
-2) Busses/"Arrays" (quality of life)
+3) Busses/"Arrays" (quality of life)
 
     - Technically not needed as you could add individual wires for everything, but still useful nonetheless
 

@@ -6,6 +6,22 @@ Digital System Markup Language
 
 An XML-like alternative to Verilog, well kind of. Not NEARLY as feature-filled.
 
+Example module:
+
+```
+<module name="test" inputs="a,b,clk,rst" outputs="c,d,e">
+    <wire name="c">
+        <!-- c = (a & b) | b -->
+        <and a="a" b="b"></and>
+        <or a="c" b="b"></or>
+    </wire>
+    <reg name="d" clock="clk" reset="rst" rising="true" active-low="false" default="gnd">
+        <!-- d = c (will only activate on clock pulse) -->
+        c
+    </reg>
+</module>
+```
+
 ## Running
 
 `dotnet run <simulation | plot | diagram> <filename>`

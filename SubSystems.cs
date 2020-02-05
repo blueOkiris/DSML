@@ -29,7 +29,9 @@ namespace DSML {
             double i = StartTime;
             bool currentValue = InitialValue;
             while(i < maxTime) {
-                assignments.Add(new Assignment(i, DeviceName, InputId, currentValue));
+                Assignment newAssign = new Assignment(i, DeviceName, InputId, currentValue);
+                newAssign.IsClock = true;
+                assignments.Add(newAssign);
 
                 currentValue = !currentValue;
                 i += Period;
@@ -44,16 +46,28 @@ namespace DSML {
         public string InputId;
         public bool Value;
         public string DeviceName;
+        public bool IsClock;
 
         public Assignment(double time, string deviceName, string inputId, bool value) {
             Time = time;
             InputId = inputId;
             Value = value;
             DeviceName = deviceName;
+            IsClock = false;
         }
 
         public int CompareTo(object other) {
-            return Time.CompareTo(((Assignment) other).Time);
+            int timeComparison = Time.CompareTo(((Assignment) other).Time);
+
+            // Sort clock created assignments first!
+            return 
+                timeComparison == 0 ?
+                    ((IsClock && !((Assignment) other).IsClock) ?       // Is clock and other isn't
+                        -1 :
+                        ((!IsClock && ((Assignment) other).IsClock) ?    // Other is and this one isn't
+                            1 :
+                            timeComparison)) :
+                    timeComparison;
         }
     }
 
@@ -157,6 +171,9 @@ namespace DSML {
                     Devices[(timedAssignments[t])[j].DeviceName].BaseModuleCopy.Update();
                 }
 
+                foreach(string device in Devices.Keys)
+                    Devices[device].BaseModuleCopy.Update();
+
                 foreach(string output in Outputs.Keys) {
                     if(Devices[Outputs[output].DeviceName].BaseModuleCopy.Outputs.ContainsKey(Outputs[output].InputId))
                         Console.WriteLine(
@@ -195,6 +212,9 @@ namespace DSML {
                     Devices[(timedAssignments[t])[j].DeviceName].BaseModuleCopy.Inputs[(timedAssignments[t])[j].InputId] = (timedAssignments[t])[j].Value;
                     Devices[(timedAssignments[t])[j].DeviceName].BaseModuleCopy.Update();
                 }
+
+                foreach(string device in Devices.Keys)
+                    Devices[device].BaseModuleCopy.Update();
 
                 foreach(string output in Outputs.Keys) {
                     if(Devices[Outputs[output].DeviceName].BaseModuleCopy.Outputs.ContainsKey(Outputs[output].InputId)) {

@@ -108,4 +108,10 @@ These are the planned next steps to add to the language add another input to you
 
     - Generates a schematic for each module
 
+4) Rising Edge (and falling edge) Clocs
+
+    - Tons of devices use these, so that would be good to have
+
+    - It seems like a semi-dificult thing to do, and yet not a necessity (for playing around of course. Not talking about "real world" applications)
+
 If you have any suggestions, feel free to email me at dylantdmt@gmail.com!

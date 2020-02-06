@@ -106,7 +106,7 @@ These are the planned next steps to add to the language add another input to you
 
     - Generates a schematic for each module
 
-3) Rising Edge (and falling edge) Clocs
+3) Rising Edge (and falling edge) Clocks
 
     - Tons of devices use these, so that would be good to have
 

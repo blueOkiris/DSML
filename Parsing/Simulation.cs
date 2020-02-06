@@ -1,10 +1,11 @@
 /*
  * This is just the support classes for DigitalSystem
  * Moved them to another file for readability
+ *
+ * Specifically holds simulation stuff. The module stuff has been moved to Module.cs
  */
 using System;
 using System.Collections.Generic;
-using System.Linq;
 
 namespace DSML {
     struct Clock {
@@ -94,7 +95,12 @@ namespace DSML {
             InitialInputs = initialInputs;
 
             // Blank module
-            BaseModuleCopy = new Module(BaseModuleName, new Dictionary<string, bool>(), new Dictionary<string, bool>(), new Wire[] {}, new Reg[] {});
+            BaseModuleCopy = new Module(BaseModuleName,
+                                    new Dictionary<string, bool>(),
+                                    new Dictionary<string, bool>(), 
+                                    new Wire[] {}, 
+                                    new Reg[] {}, 
+                                    new ModuleDevice[] {});
         }
 
         public void Initialize(Dictionary<string, Module> moduleTemplates) {
@@ -103,7 +109,8 @@ namespace DSML {
                                     new Dictionary<string, bool>(), 
                                     new Dictionary<string, bool>(),
                                     new Wire[] {},
-                                    new Reg[] {});
+                                    new Reg[] {},
+                                    new ModuleDevice[] {});
 
             foreach(string input in moduleTemplates[BaseModuleName].Inputs.Keys)
                 BaseModuleCopy.Inputs.Add(input, moduleTemplates[BaseModuleName].Inputs[input]);
@@ -117,9 +124,14 @@ namespace DSML {
             List<Reg> regs = new List<Reg>();
             foreach(Reg reg in moduleTemplates[BaseModuleName].Registers)
                 regs.Add(reg);
+
+            List<ModuleDevice> devices = new List<ModuleDevice>();
+            foreach(ModuleDevice device in moduleTemplates[BaseModuleName].Devices)
+                devices.Add(device);
             
             BaseModuleCopy.Wires = wires.ToArray();
             BaseModuleCopy.Registers = regs.ToArray();
+            BaseModuleCopy.Devices = devices.ToArray();
 
             foreach(string input in InitialInputs.Keys)
                 BaseModuleCopy.Inputs[input] = InitialInputs[input];
@@ -268,171 +280,6 @@ namespace DSML {
                 data.Add(new PlotData(name, plotTimes[name], plotValues[name]));
 
             return data;
-        }
-    }
-
-    class Module {
-        public string Name;
-        public Dictionary<string, bool> Inputs;
-        public Dictionary<string, bool> Outputs;
-
-        public Wire[] Wires;
-        public Reg[] Registers;
-
-        public Module(string name, Dictionary<string, bool> inputs, Dictionary<string, bool> outputs, Wire[] wires, Reg[] registers) {
-            Name = name;
-            Inputs = inputs;
-            Outputs = outputs;
-            Wires = wires;
-            Registers = registers;
-        }
-
-        public void Update() {
-            // Registers
-            for(int i = 0; i < Registers.Length; i++) {
-                foreach(Wire wire in Wires) {
-                    if(!Registers[i].Drivers.ContainsKey(wire.Name))
-                        Registers[i].Drivers.Add(wire.Name, false);
-                }
-
-                foreach(Reg reg in Registers) {
-                    if(!Registers[i].Drivers.ContainsKey(reg.Name))
-                        Registers[i].Drivers.Add(reg.Name, false);
-                }
-
-                foreach(string input in Inputs.Keys) {
-                    if(!Registers[i].Drivers.ContainsKey(input))
-                        Registers[i].Drivers.Add(input, false);
-                }
-
-                foreach(string output in Outputs.Keys) {
-                    if(!Registers[i].Drivers.ContainsKey(output))
-                        Registers[i].Drivers.Add(output, false);
-                }
-            }
-
-            for(int i = 0; i < Registers.Length; i++) {
-                foreach(string input in Inputs.Keys) {
-                    if(input == Registers[i].Name)
-                        throw new Exception("Cannot assign to input '" + input + "'");
-                    
-                    if(Registers[i].Drivers.ContainsKey(input))
-                        Registers[i].Drivers[input] = Inputs[input];
-                }
-
-                foreach(string output in Outputs.Keys) {
-                    if(Registers[i].Drivers.ContainsKey(output))
-                        Registers[i].Drivers[output] = Outputs[output];
-                }
-
-                Registers[i].Update();
-
-                foreach(string output in Outputs.Keys.ToList()) {
-                    if(Registers[i].Name == output)
-                        Outputs[output] = Registers[i].Output();
-                }
-            }
-
-            // Wires
-            for(int i = 0; i < Wires.Length; i++) {
-                foreach(Wire wire in Wires) {
-                    if(!Wires[i].Drivers.ContainsKey(wire.Name))
-                        Wires[i].Drivers.Add(wire.Name, false);
-                }
-
-                foreach(Reg reg in Registers) {
-                    if(!Wires[i].Drivers.ContainsKey(reg.Name))
-                        Wires[i].Drivers.Add(reg.Name, false);
-                }
-
-                foreach(string input in Inputs.Keys) {
-                    if(!Wires[i].Drivers.ContainsKey(input))
-                        Wires[i].Drivers.Add(input, false);
-                }
-
-                foreach(string output in Outputs.Keys) {
-                    if(!Wires[i].Drivers.ContainsKey(output))
-                        Wires[i].Drivers.Add(output, false);
-                }
-            }
-
-            for(int i = 0; i < Wires.Length; i++) {
-                foreach(string input in Inputs.Keys) {
-                    if(input == Wires[i].Name)
-                        throw new Exception("Cannot assign to input '" + input + "'");
-                    
-                    if(Wires[i].Drivers.ContainsKey(input))
-                        Wires[i].Drivers[input] = Inputs[input];
-                }
-
-                foreach(string output in Outputs.Keys) {
-                    if(Wires[i].Drivers.ContainsKey(output))
-                        Wires[i].Drivers[output] = Outputs[output];
-                }
-
-                foreach(string output in Outputs.Keys.ToList()) {
-                    if(Wires[i].Name == output)
-                        Outputs[output] = Wires[i].Output();
-                }
-            }
-        }
-    }
-
-    abstract class IO {
-        public Func<Dictionary<string, bool>, bool>[] Driven;
-        public string Name;
-        public Dictionary<string, bool> Drivers;
-        
-        public abstract bool Output();
-    }
-
-    class Wire : IO {
-        public Wire(string name, Func<Dictionary<string, bool>, bool>[] driven, Dictionary<string, bool> drivers) {
-            Name = name;
-            Driven = driven;
-            
-            Drivers = drivers;
-            Drivers.Add(Name, false);
-        }
-
-        public override bool Output() {
-            for(int i = 0; i < Driven.Length; i++)
-                Drivers[Name] = Driven[i](Drivers);
-
-            return Drivers[Name];
-        }
-    }
-
-    class Reg : IO {
-        public bool PositiveLevel, ActiveLow;
-        public bool Default;
-        public string ResetName, ClockName;
-
-        public Reg(string name, string clockName, string resetName, bool positiveLevel, bool activeLow, bool def, Func<Dictionary<string, bool>, bool>[] driven, Dictionary<string, bool> drivers) {
-            Name = name;
-            ClockName = clockName;
-            ResetName = resetName;
-            Driven = driven;
-            PositiveLevel = positiveLevel;
-            ActiveLow = activeLow;
-            
-            Drivers = drivers;
-            Drivers.Add(Name, def);
-            Drivers.Add(ClockName, false);
-            Drivers.Add(ResetName, false);
-
-            Default = def;
-        }
-
-        public override bool Output() => Drivers[Name];
-
-        public void Update() {
-            if((ActiveLow && !Drivers[ResetName]) || (!ActiveLow && Drivers[ResetName]))
-                Drivers[Name] = default;
-            else if((PositiveLevel && Drivers[ClockName]) || (!PositiveLevel && Drivers[ClockName])) {
-                for(int i = 0; i < Driven.Length; i++)
-                    Drivers[Name] = Driven[i](Drivers);
-            }
         }
     }
 }

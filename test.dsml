@@ -17,29 +17,35 @@
     </reg>
 </module>
 
+<module name="test2" inputs="f,g,clk2,rst2" outputs="c,d,e">
+    <device module="test" inputs="f,g,clk2,rst2" outputs="c,d,e"></device>
+</module>
+
 <simulation name="sim1">
-    <device name="test_mod1" module="test" initialize="a=gnd,b=gnd,clk=gnd,reset=gnd"></device>
-    <clock start="0.9ms" frequency="3000Hz" device="test_mod1" id="clk"> vcc </clock>
+    <!-- <device name="test_mod1" module="test" initialize="a=gnd,b=gnd,clk=gnd,rst=gnd"></device> -->
+    <device name="test_mod2" module="test2" initialize="f=gnd,g=gnd,clk=gnd,rst=gnd"></device>
+
+    <clock start="0.9ms" frequency="3000Hz" device="test_mod2" id="clk2"> vcc </clock>
 
     <!-- @ 3ms b = 1 (out of order for testing simulation contstruction -->
-    <assign time="3ms" device="test_mod1" id="b"> vcc </assign>
+    <assign time="3ms" device="test_mod2" id="g"> vcc </assign>
 
     <!-- a = 0, b = 0 -->
-    <assign time="0ms" device="test_mod1" id="a"> gnd </assign>
-    <assign time="0ms" device="test_mod1" id="b"> gnd </assign>
+    <assign time="0ms" device="test_mod2" id="f"> gnd </assign>
+    <assign time="0ms" device="test_mod2" id="g"> gnd </assign>
 
     <!-- b = 1 -->
-    <assign time="1ms" device="test_mod1" id="b"> vcc </assign>
+    <assign time="1ms" device="test_mod2" id="g"> vcc </assign>
 
     <!-- a = 1, b = 0 -->
-    <assign time="2ms" device="test_mod1" id="a"> vcc </assign>
-    <assign time="2ms" device="test_mod1" id="b"> gnd </assign>
+    <assign time="2ms" device="test_mod2" id="f"> vcc </assign>
+    <assign time="2ms" device="test_mod2" id="g"> gnd </assign>
 
-    <assign time="4ms" device="test_mod1" id="a"> gnd </assign>
-    <assign time="4ms" device="test_mod1" id="b"> gnd </assign>
-    <assign time="6ms" device="test_mod1" id="b"> gnd </assign>
+    <assign time="4ms" device="test_mod2" id="f"> gnd </assign>
+    <assign time="4ms" device="test_mod2" id="g"> gnd </assign>
+    <assign time="6ms" device="test_mod2" id="g"> gnd </assign>
 
-    <output device="test_mod1" id="c"></output>
-    <output device="test_mod1" id="d"></output>
-    <output device="test_mod1" id="clk"></output>
+    <output device="test_mod2" id="c"></output>
+    <output device="test_mod2" id="d"></output>
+    <output device="test_mod2" id="clk2"></output>
 </simulation>

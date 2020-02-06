@@ -29,6 +29,10 @@ Example module:
         c
     </reg>
 </module>
+
+<module name="test2" inputs="f,g,clk2,rst2" outputs="c,d,e">
+    <device module="test" inputs="a=f,b=g,clk=clk2,rst=rst2" outputs="c=c,d=d,e=e"></device>
+</module>
 ```
 
 'and_func.mls'

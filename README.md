@@ -84,7 +84,7 @@ These are just basic explanations. Look at test.dsml to see the application of t
 
  * `<simulation>` - This defines a simulation to be run. It's sub tags set up what will happen. It takes a name as an attribute
 
- * `<device>` - Defines a instance of a module that can be test for a simulation. You give it its own id as well as the base module, and you also give it intial values for its inputs along the lines of "input = vcc|gnd"
+ * `<device>` - Two cases. Inside a simulation tag, it defines a instance of a module that can be test for a simulation. You give it its own id as well as the base module, and you also give it intial values for its inputs along the lines of "input = vcc|gnd." Inside of a module tag, it defines a sub module that can be used to reuse designs. For instance, you might be building an ALU, so you make a 1-bit adder, and load an instance of that adder inside your ALU module.
 
  * `<clock>` - This creates a clock that oscillates a given device's given input (id) at a given frequency starting at a given time
 
@@ -102,11 +102,15 @@ These are the planned next steps to add to the language add another input to you
 
     - Will be called for simulations like `module.input_bus[index]` just as one familiar with programming would expect
 
-2) Diagram
+2) Multi-file projects
+
+    - Allow "imports" of modules and simulations to form one large project instead of having a single file
+
+3) Diagram
 
     - Generates a schematic for each module
 
-3) Rising Edge (and falling edge) Clocks
+4) Rising Edge (and falling edge) Clocks
 
     - Tons of devices use these, so that would be good to have
 

@@ -27,52 +27,27 @@
 <simulation name="sim">
     <device name="adder1" module="4bit-add" initialize="cin=gnd,a0=gnd,a1=gnd,a2=gnd,a3=gnd,b0=gnd,b1=gnd,b2=gnd,b3=gnd"></device>
 
-    <assign time="1ms" device="adder1" id="a0"> vcc </assign>
+    <clock start="0ms" frequency="6400Hz" device="adder1" id="a0"></clock>
+    <clock start="0ms" frequency="3200Hz" device="adder1" id="a1"></clock>
+    <clock start="0ms" frequency="1600Hz" device="adder1" id="a2"></clock>
+    <clock start="0ms" frequency="800Hz" device="adder1" id="a3"></clock>
 
-    <assign time="2ms" device="adder1" id="a0"> gnd </assign>
-    <assign time="2ms" device="adder1" id="a1"> vcc </assign>
+    <clock start="0ms" frequency="800Hz" device="adder1" id="b0"></clock>
+    <clock start="0ms" frequency="400Hz" device="adder1" id="b1"></clock>
+    <clock start="0ms" frequency="200Hz" device="adder1" id="b2"></clock>
+    <clock start="0ms" frequency="100Hz" device="adder1" id="b3"></clock>
 
-    <assign time="3ms" device="adder1" id="a0"> vcc </assign>
+    <assign time="20ms" device="adder1" id="cin"> gnd </assign>
 
-    <assign time="4ms" device="adder1" id="a0"> gnd </assign>
-    <assign time="4ms" device="adder1" id="a1"> gnd </assign>
-    <assign time="4ms" device="adder1" id="a2"> vcc </assign>
+    <output device="adder1" id="a0"></output>
+    <output device="adder1" id="a1"></output>
+    <output device="adder1" id="a2"></output>
+    <output device="adder1" id="a3"></output>
 
-    <assign time="5ms" device="adder1" id="a0"> vcc </assign>
-
-    <assign time="6ms" device="adder1" id="a0"> gnd </assign>
-    <assign time="6ms" device="adder1" id="a1"> vcc </assign>
-    <assign time="6ms" device="adder1" id="a2"> vcc </assign>
-
-    <assign time="7ms" device="adder1" id="a0"> vcc </assign>
-
-    <assign time="8ms" device="adder1" id="a0"> gnd </assign>
-    <assign time="8ms" device="adder1" id="a1"> gnd </assign>
-    <assign time="8ms" device="adder1" id="a2"> gnd </assign>
-    <assign time="8ms" device="adder1" id="a3"> vcc </assign>
-
-    <assign time="9ms" device="adder1" id="a0"> vcc </assign>
-
-    <assign time="10ms" device="adder1" id="a0"> gnd </assign>
-    <assign time="10ms" device="adder1" id="a1"> vcc </assign>
-
-    <assign time="11ms" device="adder1" id="a0"> vcc </assign>
-
-    <assign time="12ms" device="adder1" id="a0"> gnd </assign>
-    <assign time="12ms" device="adder1" id="a1"> gnd </assign>
-    <assign time="12ms" device="adder1" id="a2"> vcc </assign>
-
-    <assign time="13ms" device="adder1" id="a0"> vcc </assign>
-
-    <assign time="14ms" device="adder1" id="a0"> gnd </assign>
-    <assign time="14ms" device="adder1" id="a1"> vcc </assign>
-
-    <assign time="15ms" device="adder1" id="a0"> vcc </assign>
-
-    <assign time="16ms" device="adder1" id="a0"> gnd </assign>
-    <assign time="16ms" device="adder1" id="a1"> gnd </assign>
-    <assign time="16ms" device="adder1" id="a2"> gnd </assign>
-    <assign time="16ms" device="adder1" id="a3"> gnd </assign>
+    <output device="adder1" id="b0"></output>
+    <output device="adder1" id="b1"></output>
+    <output device="adder1" id="b2"></output>
+    <output device="adder1" id="b3"></output>
 
     <output device="adder1" id="s0"></output>
     <output device="adder1" id="s1"></output>

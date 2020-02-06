@@ -43,7 +43,7 @@ namespace DSML {
             int iconIndex = 0;
 
             foreach(PlotData datum in data) {
-                Plot plot = new Plot(640, 480);
+                Plot plot = new Plot(1280, 720);
                 plot.Title(title);
                 //plot.Legend(location: legendLocation.middleRight);
                 plot.Style(ScottPlot.Style.Gray1);

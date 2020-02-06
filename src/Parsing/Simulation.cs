@@ -135,6 +135,8 @@ namespace DSML {
 
             foreach(string input in InitialInputs.Keys)
                 BaseModuleCopy.Inputs[input] = InitialInputs[input];
+            
+            BaseModuleCopy.InitializeDevices(moduleTemplates);
         }
     }
 
@@ -271,7 +273,7 @@ namespace DSML {
                         throw new Exception("Output " + Outputs[output].InputId + " does not exist");
                 }
                 
-                Console.WriteLine();
+                //Console.WriteLine();
             }
 
             List<PlotData> data = new List<PlotData>();

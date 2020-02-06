@@ -92,23 +92,17 @@ These are just basic explanations. Look at test.dsml to see the application of t
 
 These are the planned next steps to add to the language add another input to your module's list then set the inputs to the sub-device from the added one
 
-1) Allow modules to be used within another module (obviously just makes sense)
-
-    - Will use the `<device>` tag just like when using simulations.
-
-    - Inputs to devices will be hidden. You'll need to
-
-2) Busses/"Arrays" (quality of life)
+1) Busses/"Arrays" (quality of life)
 
     - Technically not needed as you could add individual wires for everything, but still useful nonetheless
 
     - Will be called for simulations like `module.input_bus[index]` just as one familiar with programming would expect
 
-3) Diagram
+2) Diagram
 
     - Generates a schematic for each module
 
-4) Rising Edge (and falling edge) Clocs
+3) Rising Edge (and falling edge) Clocs
 
     - Tons of devices use these, so that would be good to have
 

@@ -11,10 +11,12 @@ using System.Linq;
 namespace DSML {
     class ModuleDevice : Device {
         public Dictionary<string, string> ParentToSelfInputs;
+        public Dictionary<string, string> SelfToParentOutputs;
 
-        public ModuleDevice(string name, string baseModuleName, Dictionary<string, bool> initialInputs, Dictionary<string, string> parentToSelfInputs)
-                : base(name, baseModuleName, initialInputs) {
+        public ModuleDevice(string baseModuleName, Dictionary<string, string> parentToSelfInputs, Dictionary<string, string> selfToParentOutputs)
+                : base("", baseModuleName, new Dictionary<string, bool>()) {
             ParentToSelfInputs = parentToSelfInputs;
+            SelfToParentOutputs = selfToParentOutputs;
         }
     }
 
@@ -34,6 +36,11 @@ namespace DSML {
             Wires = wires;
             Registers = registers;
             Devices = devices;
+        }
+
+        public void InitializeDevices(Dictionary<string, Module> moduleTemplates) {
+            for(int i = 0; i < Devices.Length; i++)
+                Devices[i].Initialize(moduleTemplates);
         }
 
         // Registers could have a wire, an input, or an output as its input
@@ -169,16 +176,14 @@ namespace DSML {
         }
 
         public void Update() {
-            for(int i = 0; i < 4; i++) {
-                // Wires
-                UpdateWires();
+            // Wires
+            UpdateWires();
 
-                // Registers
-                UpdateRegisters();
+            // Registers
+            UpdateRegisters();
 
-                // Sub Devices
-                UpdateDevices();
-            }
+            // Sub Devices
+            UpdateDevices();
         }
     }
 

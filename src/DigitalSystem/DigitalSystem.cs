@@ -28,6 +28,7 @@ namespace DSML {
             Dictionary<string, bool> outputs = new Dictionary<string, bool>();
             List<Wire> wires = new List<Wire>();
             List<Reg> registers = new List<Reg>();
+            List<ModuleDevice> devices = new List<ModuleDevice>();
 
             foreach(Token subToken in token.SubTokens) {
                 if(subToken.Type == TokenType.ATTR) {
@@ -50,6 +51,8 @@ namespace DSML {
                         wires.Add(BuildWire(subToken));
                     } else if(subToken.Value == "reg") {
                         registers.Add(BuildRegister(subToken));
+                    } else if(subToken.Value == "device") {
+                        devices.Add(BuildSubDevice(subToken));
                     } else
                         throw new Exception("Unepected '" + subToken.Value + "' tag in module");
                 } else if(subToken.Type == TokenType.COMMENT)
@@ -58,7 +61,7 @@ namespace DSML {
                     throw new Exception("Unknown token in module!");
             }
 
-            return new Module(name, inputs, outputs, wires.ToArray(), registers.ToArray(), new ModuleDevice[] {});
+            return new Module(name, inputs, outputs, wires.ToArray(), registers.ToArray(), devices.ToArray());
         }
 
         private Simulation BuildSimulation(Token token) {

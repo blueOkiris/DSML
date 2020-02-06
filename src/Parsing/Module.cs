@@ -9,9 +9,10 @@ using System.Collections.Generic;
 using System.Linq;
 
 namespace DSML {
+    // Basically the same as a simulation's device, but it adds a map from the parent module to itself
     class ModuleDevice : Device {
-        public Dictionary<string, string> ParentToSelfInputs;
-        public Dictionary<string, string> SelfToParentOutputs;
+        public Dictionary<string, string> ParentToSelfInputs;       // Map the parent's inputs and outputs to its inputs
+        public Dictionary<string, string> SelfToParentOutputs;      // Map the system's outputs to parent outputs
 
         public ModuleDevice(string baseModuleName, Dictionary<string, string> parentToSelfInputs, Dictionary<string, string> selfToParentOutputs)
                 : base("", baseModuleName, new Dictionary<string, bool>()) {
@@ -20,11 +21,14 @@ namespace DSML {
         }
     }
 
+    // Base "classes" of the system
+    // You design a device which has inputs, outputs, and internal code to control the outputs
     class Module {
         public string Name;
-        public Dictionary<string, bool> Inputs;
-        public Dictionary<string, bool> Outputs;
+        public Dictionary<string, bool> Inputs;                     // Store the current value of inputs for recalculating outputs
+        public Dictionary<string, bool> Outputs;                    // The current values of the outputs (need to call Update to update)
 
+        // All the subsystems that interact to make the module work
         public Wire[] Wires;
         public Reg[] Registers;
         public ModuleDevice[] Devices;
@@ -38,6 +42,7 @@ namespace DSML {
             Devices = devices;
         }
 
+        // Allow the devices to set their base modules up
         public void InitializeDevices(Dictionary<string, Module> moduleTemplates) {
             for(int i = 0; i < Devices.Length; i++)
                 Devices[i].Initialize(moduleTemplates);
@@ -163,6 +168,16 @@ namespace DSML {
                 foreach(string output in Outputs.Keys) {
                     if(Devices[i].ParentToSelfInputs.ContainsKey(output))
                         Devices[i].BaseModuleCopy.Inputs[Devices[i].ParentToSelfInputs[output]] = Outputs[output];
+                }
+
+                foreach(Wire wire in Wires) {
+                    if(Devices[i].ParentToSelfInputs.ContainsKey(wire.Name))
+                        Devices[i].BaseModuleCopy.Inputs[Devices[i].ParentToSelfInputs[wire.Name]] = wire.Output();
+                }
+
+                foreach(Reg reg in Registers) {
+                    if(Devices[i].ParentToSelfInputs.ContainsKey(reg.Name))
+                        Devices[i].BaseModuleCopy.Inputs[Devices[i].ParentToSelfInputs[reg.Name]] = reg.Output();
                 }
 
                 Devices[i].BaseModuleCopy.Update();

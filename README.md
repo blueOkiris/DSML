@@ -102,15 +102,23 @@ These are the planned next steps to add to the language add another input to you
 
     - Will be called for simulations like `module.input_bus[index]` just as one familiar with programming would expect
 
-2) Multi-file projects
+3) Custom plots (quality of life)
+
+    - Allow specification of plots for easier readability of testing
+
+    - Will allow stacking multiple plots, tabbed plots, more than just on/off (i.e. busses as full numbers), etc.
+
+    - Will add a `<plot>` tag, and outputs will be inside this plot. Each created plot will be a separate tab in the created "application"
+
+4) Multi-file projects
 
     - Allow "imports" of modules and simulations to form one large project instead of having a single file
 
-3) Diagram
+5) Diagram
 
     - Generates a schematic for each module
 
-4) Rising Edge (and falling edge) Clocks
+6) Rising Edge (and falling edge) Clocks
 
     - Tons of devices use these, so that would be good to have
 

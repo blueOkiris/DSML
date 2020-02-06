@@ -50,7 +50,7 @@ Inputs["a"] && Inputs["b"]
 
 *diagram* is unimplemented, but will create a schematic of your device.
 
-Example: `dotnet run plot test.dsml` results in:
+Example: `dotnet run plot examples/test.dsml` results in:
 
 <img src="example-plot.png" width="640" title="Example Plot">
 

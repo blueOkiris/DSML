@@ -184,8 +184,8 @@ namespace DSML {
 
                 // Update our own outputs from the device
                 foreach(string output in Outputs.Keys.ToList()) {
-                    if(Devices[i].BaseModuleCopy.Outputs.ContainsKey(output))
-                        Outputs[output] = Devices[i].BaseModuleCopy.Outputs[output];
+                    if(Devices[i].SelfToParentOutputs.ContainsKey(output))
+                        Outputs[output] = Devices[i].BaseModuleCopy.Outputs[Devices[i].SelfToParentOutputs[output]];
                 }
             }
         }
